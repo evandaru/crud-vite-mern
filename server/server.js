@@ -1,7 +1,8 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb'); // Tambahkan ObjectId di sini
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 
+// MongoDB URI langsung dalam kode
 const uri = "mongodb+srv://admin:admin@cluster0.kei3i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri, {
     serverApi: {
@@ -12,11 +13,14 @@ const client = new MongoClient(uri, {
 });
 
 const app = express();
-const port = 5000;
+const port = 5000; // Port lokal yang akan digunakan
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://crud-vite-mern.vercel.app', // Ganti dengan domain frontend Anda
+    optionsSuccessStatus: 200
+}));
 
 async function run() {
     try {
@@ -38,7 +42,6 @@ async function run() {
             const newUser = req.body;
             try {
                 const result = await collection.insertOne(newUser);
-                // Ambil dokumen yang baru dimasukkan
                 const insertedUser = await collection.findOne({ _id: result.insertedId });
                 res.status(201).json(insertedUser);
             } catch (error) {
@@ -64,8 +67,6 @@ async function run() {
                 res.status(500).json({ error: 'Failed to update user' });
             }
         });
-
-
 
         const isValidObjectId = (id) => {
             return /^[0-9a-fA-F]{24}$/.test(id);
