@@ -29,10 +29,17 @@ async function run() {
     const collection = db.collection("users");
 
     // Routes
+    // app.get('/users', async (req, res) => {
+    //   const users = await collection.find().toArray();
+    //   res.json(users);
+    // });
+
     app.get('/users', async (req, res) => {
-      const users = await collection.find().toArray();
-      res.json(users);
-    });
+        const db = client.db("testDatabase");
+        const collection = db.collection("users");
+        const users = await collection.find().toArray();
+        res.json(users);
+      });
 
     app.post('/users', async (req, res) => {
       const newUser = req.body;
